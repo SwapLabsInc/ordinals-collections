@@ -97,6 +97,6 @@ export const addInscriptionNumbers = async () => {
     };
 
     let transformedInscriptions = await promiseAllInBatches(task, inscriptions, BATCH_SIZE);
-    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(transformedInscriptions, null, 2));
+    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(transformedInscriptions, null, null));
   }
 };
