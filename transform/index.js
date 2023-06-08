@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import { addInscriptionNumbers } from './numbers.js';
+import { cleanupInscriptionFiles } from './cleanup.js';
 
 const sdk = api('@reservoirprotocol/v2.0#9dy1olfh4mtzp');
 sdk.auth('demo-api-key');
@@ -307,5 +308,6 @@ let enabled = [];
   }
 
   await addInscriptionNumbers();
+  await cleanupInscriptionFiles();
   await listCollections();
 })();
