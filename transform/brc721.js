@@ -93,6 +93,14 @@ export const processBrc721 = async () => {
       let inscriptionPath = `../collections/${collection}/inscriptions.json`;
       let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, inscriptionPath)));
       let numberIdMap = {};
+      if(inscriptions.data) {
+        fs.writeFileSync(path.resolve(__dirname, inscriptionPath), JSON.stringify(inscriptions.data.map((entry) => {
+          return {
+            id: entry["Inscription_Id"]
+          }
+        }), undefined, 2));
+        throw new Error('Reformatted from input - please restart');
+      }
 
       for(let inscription of inscriptions) {
         if(!inscription.number) {
