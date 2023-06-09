@@ -27,23 +27,27 @@ async function promiseAllInBatches(task, items, batchSize) {
 
 export const processBrc721 = async () => {
   let getItemData = async (payload) => {
-    let metadataIpfs = payload.metadataIpfs;
-    let itemId = payload.itemId;
-    let tick = payload.tick;
-    let number = payload.number;
-    let inscriptionId = payload.inscriptionId;
+    let {
+      metadataIpfs,
+      itemId,
+      tick,
+      number,
+      inscriptionId,
+      metadataSuffix
+    } = payload;
 
     let getJSON = async (retries=5) => {
       try {
-        let metadata = await fetch(`https://ipfs.ordinals.market/ipfs/${metadataIpfs}/${itemId}`);
+        let metadata = await fetch(`https://ipfs.ordinals.market/ipfs/${metadataIpfs}/${itemId}${metadataSuffix}`);
         return await metadata.json();
-      } catch {
+      } catch(e) {
         if(retries < 0) {
           return {
-            id: inscriptionId
+            id: inscriptionId,
+            lastError: e
           };
         }
-        await timeout(3000);
+        await timeout(5000);
         return await getJSON(retries-1);
       }
     }
@@ -82,6 +86,8 @@ export const processBrc721 = async () => {
       let metadataIpfs = deploymentContents.ipfs.split('//')[1];
       if(!metadataIpfs) throw new Error('Invalid ipfs');
 
+      let metadataSuffix = collectionMeta.metadata_suffix ?? '';
+
       let tick = deploymentContents.tick;
       if(tick.length == 0) throw new Error('Invalid tick');
 
@@ -116,18 +122,19 @@ export const processBrc721 = async () => {
 
       let sortedNumberIdMap = Object.entries(numberIdMap).sort(v => v[1]);
 
-      let itemId = 0;
+      let itemId = parseInt(collectionMeta.token_id_offset) ?? 0;
       let payloads = [];
 
       for(let [inscriptionId, number] of sortedNumberIdMap) {
-        if(itemId >= maxItems) continue;
+        if(payloads.length >= maxItems) continue;
 
         payloads.push({
           tick,
           metadataIpfs,
           number,
           itemId,
-          inscriptionId
+          inscriptionId,
+          metadataSuffix
         });
 
         itemId += 1;
