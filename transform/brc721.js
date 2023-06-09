@@ -99,7 +99,18 @@ export const processBrc721 = async () => {
       let inscriptionPath = `../collections/${collection}/inscriptions.json`;
       let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, inscriptionPath)));
       let numberIdMap = {};
-      if(inscriptions.data) {
+      if(inscriptions.data || collectionMeta.scrape) {
+        if(collectionMeta.scrape) {
+          let page = 0;
+          let data = [];
+          inscriptions.data = [];
+          while(page == 0 || data.length > 0) {
+            data = (await fetch('https://brc721.cc/ord-api/nft-data?tick='+tick+'&page='+page).then(res => res.json())).data;
+            console.log('nft-data/'+page, data.length);
+            inscriptions.data = inscriptions.data.concat(data);
+            page += 1;
+          }
+        }
         fs.writeFileSync(path.resolve(__dirname, inscriptionPath), JSON.stringify(inscriptions.data.map((entry) => {
           return {
             id: entry["Inscription_Id"]
