@@ -33,9 +33,9 @@ export const processBrc721 = async () => {
     let number = payload.number;
     let inscriptionId = payload.inscriptionId;
 
-    let getJSON = async (retries=3) => {
+    let getJSON = async (retries=5) => {
       try {
-        let metadata = await fetch(`https://ipfs.io/ipfs/${metadataIpfs}/${itemId}`);
+        let metadata = await fetch(`https://ipfs.ordinals.market/ipfs/${metadataIpfs}/${itemId}`);
         return await metadata.json();
       } catch {
         if(retries < 0) {
@@ -43,12 +43,17 @@ export const processBrc721 = async () => {
             id: inscriptionId
           };
         }
+        await timeout(3000);
         return await getJSON(retries-1);
       }
     }
 
     let json = await getJSON();
-    if(!json.image || !json.image.startsWith('ipfs://')) throw new Error('Item image is missing IPFS');
+
+    if(!json.image || !json.image.startsWith('ipfs://')) {
+      console.error(json, payload);
+      throw new Error('Item image is missing IPFS');
+    }
 
     return {
       id: inscriptionId,
@@ -120,15 +125,18 @@ export const processBrc721 = async () => {
         itemId += 1;
       }
 
-      let itemData = await promiseAllInBatches(getItemData, payloads, 100);
+      let itemData = await promiseAllInBatches(getItemData, payloads, 250);
 
       for(let data of itemData) {
         const existingInscriptionIndex = inscriptions.findIndex((i) => i.id.toLowerCase() === data.id.toLowerCase());
         if(existingInscriptionIndex < 0) throw new Error('Cannot find existing inscription');
-        transformedInscriptions[existingInscriptionIndex] = Object.assign({}, inscriptions[existingInscriptionIndex], data);
+        transformedInscriptions.push(Object.assign({}, inscriptions[existingInscriptionIndex], data));
       }
 
+      collectionMeta.populated = true;
+
       fs.writeFileSync(path.resolve(__dirname, inscriptionPath), JSON.stringify(transformedInscriptions, null, null));
+      fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(collectionMeta, null, null));
       console.log('done!', collection);
     }
   }
