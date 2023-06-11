@@ -133,7 +133,9 @@ export const processBrc721 = async () => {
 
       let sortedNumberIdMap = Object.entries(numberIdMap).sort(v => v[1]);
 
-      let itemId = parseInt(collectionMeta.token_id_offset) ?? 0;
+      let itemId = collectionMeta.token_id_offset ? parseInt(collectionMeta.token_id_offset) : 0;
+      if(itemId == NaN) itemId = 0;
+
       let payloads = [];
 
       for(let [inscriptionId, number] of sortedNumberIdMap) {
