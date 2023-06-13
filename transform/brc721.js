@@ -37,14 +37,17 @@ export const processBrc721 = async () => {
     } = payload;
 
     let getJSON = async (retries=5) => {
+      let metadataUrl;
       try {
-        let metadata = await fetch(`https://ipfs.ordinals.market/ipfs/${metadataIpfs}/${itemId}${metadataSuffix}`);
+        metadataUrl = `https://ipfs.ordinals.market/ipfs/${metadataIpfs}/${itemId}${metadataSuffix}`;
+        let metadata = await fetch(metadataUrl);
         return await metadata.json();
       } catch(e) {
         if(retries < 0) {
           return {
             id: inscriptionId,
-            lastError: e
+            lastError: e,
+            metadataUrl
           };
         }
         await timeout(5000);
