@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 import { addInscriptionNumbers } from './numbers.js';
 import { cleanupInscriptionFiles } from './cleanup.js';
 import { processBrc721 } from './brc721.js';
+import { updateInscriptionMap } from './inscriptionMap.js';
 
 const sdk = api('@reservoirprotocol/v2.0#9dy1olfh4mtzp');
 sdk.auth('demo-api-key');
@@ -312,4 +313,5 @@ let enabled = [];
   await processBrc721();
   await cleanupInscriptionFiles();
   await listCollections();
+  await updateInscriptionMap();
 })();
