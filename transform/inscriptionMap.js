@@ -25,9 +25,8 @@ export const updateInscriptionMap = async () => {
     let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, inscriptionPath)));
     for (let item of inscriptions) {
       if (item.id) {
-        let lookupKey = item.id.charAt(0).trim();
-        if(lookupKey.length == 0) {
-          console.log('failed', item);
+        let lookupKey = item.id.trim().slice(0, 2);
+        if(lookupKey.length < 2) {
           continue;
         }
         if(!inscriptionMap[lookupKey]) inscriptionMap[lookupKey] = {};
