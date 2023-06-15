@@ -1,0 +1,38 @@
+# Good linter: http://www.yamllint.com/
+name: CICD_PROD
+on:
+  push:
+    branches:
+    - main
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout codebase
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: zip artifact for upload
+      run: zip ./collections.zip . -r
+    - name: Upload CI artifacts/files
+      uses: actions/upload-artifact@master
+      with:
+        name: collections
+        path: ./collections.zip
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download CI artifacts/files
+      uses: actions/download-artifact@master
+      with:
+        name: collections
+    - name: unzip artifact for upload
+      run: unzip collections.zip && rm collections.zip
+    - name: Upload CI artifacts/files to S3
+      uses: jakejarvis/s3-sync-action@master
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: "us-east-1"
+        AWS_S3_BUCKET: "${{ secrets.S3_BUCKET_PROD }}"
