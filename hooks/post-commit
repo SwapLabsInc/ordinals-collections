@@ -6,6 +6,7 @@ if [ -e .commit ]
     node transform
     git add collections/
     git add collections.json
+    git add lookup/
     git commit --amend -C HEAD --no-verify
 fi
 exit
