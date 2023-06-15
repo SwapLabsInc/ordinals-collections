@@ -19,10 +19,16 @@ export const updateInscriptionMap = async () => {
     return (bi > -1 ? bi + 1 : 0) - (ai > -1 ? ai + 1 : 0);
   });
 
+  let searchMap = {};
+
+
+  console.log(`🗺️ Gathering data...`);
+
   // Get hash -> collection from metadata
   prioritisedCollections.forEach((collectionKey) => {
     let inscriptionPath = `../collections/${collectionKey}/inscriptions.json`;
     let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, inscriptionPath)));
+
     for (let item of inscriptions) {
       if (item.id) {
         let lookupKey = item.id.trim().slice(0, 2);
@@ -33,6 +39,15 @@ export const updateInscriptionMap = async () => {
         inscriptionMap[lookupKey][item.id] = collectionKey;
       }
     }
+
+    let collectionPath = `../collections/${collectionKey}/meta.json`;
+    let collectionMeta = JSON.parse(fs.readFileSync(path.resolve(__dirname, collectionPath)));
+
+    searchMap[collectionKey] = [
+      collectionMeta.name,
+      collectionMeta.slug,
+      collectionMeta.description
+    ];
   });
 
   for(let lookupKey in inscriptionMap) {
@@ -41,4 +56,9 @@ export const updateInscriptionMap = async () => {
     console.log(`🗺️ Populated map-${lookupKey}.json`);
     fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(partialMap));
   }
+
+
+  let filePath = `../lookup/collection-search.json`;
+  console.log(`🗺️ Populated collection-search.json`);
+  fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(searchMap));
 };
