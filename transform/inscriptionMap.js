@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 export const updateInscriptionMap = async () => {
   console.log(`🗺️ Populating inscription map...`);
   let inscriptionMap = {};
-  let filePath = `../inscriptionMap.json`;
+
   let collections = getDirectories(path.resolve(__dirname, '../collections/'));
   let catchAlls = ['sub10k'];
   let prioritisedCollections = collections.sort((a,b) => {
@@ -25,10 +25,21 @@ export const updateInscriptionMap = async () => {
     let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, inscriptionPath)));
     for (let item of inscriptions) {
       if (item.id) {
-        inscriptionMap[item.id] = collectionKey;
+        let lookupKey = item.id.charAt(0).trim();
+        if(lookupKey.length == 0) {
+          console.log('failed', item);
+          continue;
+        }
+        if(!inscriptionMap[lookupKey]) inscriptionMap[lookupKey] = {};
+        inscriptionMap[lookupKey][item.id] = collectionKey;
       }
     }
   });
 
-  fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(inscriptionMap));
+  for(let lookupKey in inscriptionMap) {
+    let partialMap = inscriptionMap[lookupKey];
+    let filePath = `../lookup/map-${lookupKey}.json`;
+    console.log(`🗺️ Populated map-${lookupKey}.json`);
+    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(partialMap));
+  }
 };

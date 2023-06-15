@@ -17,6 +17,8 @@ export const cleanupInscriptionFiles = async () => {
       if (inscriptions[i].number && typeof inscriptions[i].number !== 'number') {
         inscriptions[i].number = parseInt(inscriptions[i].number);
       }
+
+      if(inscriptions[i].id) inscriptions[i].id = inscriptions[i].id.trim();
     }
 
     // Compress JSON to remove newlines
