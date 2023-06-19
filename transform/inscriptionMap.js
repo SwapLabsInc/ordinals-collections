@@ -32,11 +32,15 @@ export const updateInscriptionMap = async () => {
     for (let item of inscriptions) {
       if (item.id) {
         let lookupKey = item.id.trim().slice(0, 2);
+        let lookupKeyAlt = item.id.trim().slice(0, 1);
         if(lookupKey.length < 2) {
           continue;
         }
         if(!inscriptionMap[lookupKey]) inscriptionMap[lookupKey] = {};
         inscriptionMap[lookupKey][item.id] = collectionKey;
+
+        if(!inscriptionMap[lookupKeyAlt]) inscriptionMap[lookupKeyAlt] = {};
+        inscriptionMap[lookupKeyAlt][item.id] = collectionKey;
       }
     }
 
@@ -56,7 +60,6 @@ export const updateInscriptionMap = async () => {
     console.log(`🗺️ Populated map-${lookupKey}.json`);
     fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(partialMap));
   }
-
 
   let filePath = `../lookup/collection-search.json`;
   console.log(`🗺️ Populated collection-search.json`);
