@@ -31,8 +31,8 @@ export const updateInscriptionMap = async () => {
 
     for (let item of inscriptions) {
       if (item.id) {
-        let lookupKey = item.id.trim().slice(0, 2);
-        let lookupKeyAlt = item.id.trim().slice(0, 1);
+        let lookupKey = item.id.toLowerCase().trim().slice(0, 2);
+        let lookupKeyAlt = item.id.toLowerCase().trim().slice(0, 1);
         if(lookupKey.length < 2) {
           continue;
         }
