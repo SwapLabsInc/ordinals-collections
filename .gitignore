@@ -7,3 +7,5 @@ scripts/*
 node_modules/
 .commit
 environment.json
+newcollections/*
+collisionCollection/*
