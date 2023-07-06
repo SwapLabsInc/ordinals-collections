@@ -1,0 +1,10 @@
+{
+  "slug": "bitcoinwhales",
+  "name": "Bitcoin Whales",
+  "supply": 10000,
+  "inscription_icon_url": "ipfs://bafkreidhrznlzsdei7k2ar3u44k2ehmzyt3ou5ohzn754fdf7zzd62tvji",
+  "description": "Potent byte-sized whales residing on-chain in Bitcoin Ordinals.",
+  "twitter_link": "https://twitter.com/bitcoin_whales_",
+  "discord_link": "https://discord.gg/btcwhales",
+  "website_link": "https://www.bitcoinwhales.io/"
+}
