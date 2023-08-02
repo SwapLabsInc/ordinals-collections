@@ -65,9 +65,8 @@ export const addContentType = async () => {
           console.log(`!! Failed`);
         }
 
-        if (!failed && json?.results?.[0] && json?.results?.[0]?.mime_type) {
-          contentType = json?.results?.[0]?.mime_type;
-        }
+        // Falls back to image/png if no mime_type (or inscription) found
+        contentType = (!failed && json?.results?.[0] && json?.results?.[0]?.mime_type) ? json?.results?.[0]?.mime_type : 'image/png';
 
         if (contentType) {
           for (let i=0; i < inscriptions.length; i+=1) {
@@ -76,8 +75,6 @@ export const addContentType = async () => {
               content_type: contentType,
             };
           }
-        } else {
-          console.log('!!  Content type not found for first inscription in collection');
         }
 
         currentBatchCount += 1;
