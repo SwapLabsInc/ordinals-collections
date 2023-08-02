@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const BATCH_SIZE = 60;
 const BATCHES_BEFORE_DELAY = 750;
 const BATCH_TIMEOUT_DELAY = 60000;
 
@@ -94,7 +93,7 @@ export const addContentType = async () => {
       return inscriptions;
     };
 
-    let transformedInscriptions = await promiseAllInBatches(task, inscriptions, BATCH_SIZE);
+    let transformedInscriptions = await task(inscriptions);
     fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(transformedInscriptions, null, null));
   }
 };
