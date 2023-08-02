@@ -30,7 +30,7 @@ async function promiseAllInBatches(task, items, batchSize) {
   return results;
 }
 
-export const addInscriptionNumbers = async () => {
+export const addContentType = async () => {
   let environment;
   try {
     const environmentRaw = await fs.readFileSync(path.resolve(__dirname, '../environment.json'));
@@ -45,18 +45,18 @@ export const addInscriptionNumbers = async () => {
     let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)));
 
     let task = async (inscriptions) => {
-      // Skip inscriptions that already contain a number
-      const inscriptionsToProcess = inscriptions.filter((i) => !i.number || i.number?.length === 0);
+      // Skip inscriptions that already contain a content_type
+      const inscriptionsToProcess = inscriptions.filter((i) => !i.content_type || i.content_type?.length === 0);
 
-      const inscriptionIds = inscriptionsToProcess.map((i) => i.id?.toLowerCase());
-
-      if (inscriptionIds.length > 0) {
-        const inscriptionIdsString = inscriptionIds.map((id) => `&id=${id}`).join('');
+      if (inscriptionsToProcess.length > 0) {
+        // IMPORTANT: for efficiency this script will take only the first inscription in a collection and assume all items
+        //            within that collection use that mime_type
+        let contentType = null;
 
         let json;
         let failed = false;
         try {
-          json = await fetch(`https://api.hiro.so/ordinals/v1/inscriptions?limit=${BATCH_SIZE}${inscriptionIdsString}`, {
+          json = await fetch(`https://api.hiro.so/ordinals/v1/inscriptions?limit=1&id=${inscriptions[0]?.id?.toLowerCase()}`, {
             headers: {
               'x-hiro-api-key': environment?.HIRO_API_KEY ?? null,
             }
@@ -66,21 +66,19 @@ export const addInscriptionNumbers = async () => {
           console.log(`!! Failed`);
         }
 
-        if (!failed && json?.results) {
-          for (let i=0; i < json?.results.length; i+=1) {
-            const result = json.results[i];
-            if (result.id && result.number) {
-              const existingInscriptionIndex = inscriptions.findIndex((i) => i.id.toLowerCase() === result.id.toLowerCase());
-              if (existingInscriptionIndex !== -1) {
-                inscriptions[existingInscriptionIndex] = {
-                  ...inscriptions[existingInscriptionIndex],
-                  number: result.number,
-                };
-              } else {
-                console.log('!!  Existing inscription not found');
-              }
-            }
+        if (!failed && json?.results?.[0] && json?.results?.[0]?.mime_type) {
+          contentType = json?.results?.[0]?.mime_type;
+        }
+
+        if (contentType) {
+          for (let i=0; i < inscriptions.length; i+=1) {
+            inscriptions[i] = {
+              ...inscriptions[i],
+              content_type: contentType,
+            };
           }
+        } else {
+          console.log('!!  Content type not found for first inscription in collection');
         }
 
         currentBatchCount += 1;
@@ -90,7 +88,7 @@ export const addInscriptionNumbers = async () => {
           await timeout(BATCH_TIMEOUT_DELAY);
         }
 
-        console.log(`🤖 Processing batch ${currentBatchCount} (number)`);
+        console.log(`🤖 Processing batch ${currentBatchCount} (content_type)`);
       }
 
       return inscriptions;

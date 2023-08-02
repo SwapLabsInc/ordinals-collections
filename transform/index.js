@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import { addInscriptionNumbers } from './numbers.js';
+import { addContentType } from './contentType.js';
 import { cleanupInscriptionFiles } from './cleanup.js';
 import { processBrc721 } from './brc721.js';
 import { updateInscriptionMap } from './inscriptionMap.js';
@@ -310,6 +311,7 @@ let enabled = [];
   }
 
   await addInscriptionNumbers();
+  await addContentType();
   await processBrc721();
   await cleanupInscriptionFiles();
   await listCollections();
