@@ -12,6 +12,11 @@ export const flattenMetadataFiles = async () => {
     let filePathMeta = `../collections/${collection}/meta.json`;
     let meta = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePathMeta)));
 
+    if(meta.icon?.indexOf('preview/') > -1) {
+      meta.inscription_icon = meta.icon.split('preview/')[1];
+      delete meta.icon;
+    }
+
     // Compress JSON to remove newlines
     const outputJson = JSON.stringify(meta, null, null);
 

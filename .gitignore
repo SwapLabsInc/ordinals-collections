@@ -4,8 +4,7 @@ env/*
 tests/__pycache__/*
 scripts/*
 .DS_Store
-node_modules/
-.commit
+target/
+temp.txt
 environment.json
-newcollections/*
-collisionCollection/*
+node_modules/
