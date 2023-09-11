@@ -13,6 +13,7 @@ import { cleanupInscriptionFiles } from './cleanup.js';
 import { flattenMetadataFiles } from './flattenMetadata.js';
 import { processBrc721 } from './brc721.js';
 import { updateInscriptionMap } from './inscriptionMap.js';
+import { fixEmptyInscriptionFiles } from './fixEmptyInscriptionFiles.js';
 
 const sdk = api('@reservoirprotocol/v2.0#9dy1olfh4mtzp');
 sdk.auth('demo-api-key');
@@ -297,6 +298,8 @@ let listCollections = () => {
 let enabled = [];
 
 (async () => {
+  await fixEmptyInscriptionFiles();
+
   for(let collection of toTransform) {
     if(!enabled.includes(collection.meta.slug)) continue;
     console.log("Transforming "+collection.meta.slug);

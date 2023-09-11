@@ -42,7 +42,13 @@ export const addInscriptionNumbers = async () => {
   for(let collection of getDirectories(path.resolve(__dirname, '../collections/'))) {
     console.log(collection);
     let filePath = `../collections/${collection}/inscriptions.json`;
-    let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)));
+
+    let inscriptions = [];
+    try {
+      inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)));
+    } catch (e) {
+      console.error(e);
+    }
 
     let task = async (inscriptions) => {
       // Skip inscriptions that already contain a number
