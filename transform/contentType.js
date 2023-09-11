@@ -10,6 +10,14 @@ const __dirname = path.dirname(__filename);
 const BATCHES_BEFORE_DELAY = 750;
 const BATCH_TIMEOUT_DELAY = 60000;
 
+const COLLECTION_WIDE_OVERRIDES = {
+  'twelvefold': 'image/webp', // Fixes only first item in twelvefold being video/mp4
+};
+
+const ITEM_WIDE_OVERRIDES = {
+  '50e74f16f8f4f18c29e572ed466dde40a0878f30db6745467841e73b2f96ab34i0': 'video/mp4', // Fixes only first item in twelvefold being video/mp4
+};
+
 let currentBatchCount = 0;
 
 function timeout(ms) {
@@ -39,7 +47,7 @@ export const addContentType = async () => {
   }
 
   for(let collection of getDirectories(path.resolve(__dirname, '../collections/'))) {
-    console.log(collection);
+    console.log(`🌅 Adding content_type to ${collection}`);
     let filePath = `../collections/${collection}/inscriptions.json`;
     let inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)));
 
@@ -70,9 +78,21 @@ export const addContentType = async () => {
 
         if (contentType) {
           for (let i=0; i < inscriptions.length; i+=1) {
+            let finalContentType = contentType;
+
+            // Collection content_type override
+            if (COLLECTION_WIDE_OVERRIDES[collection]) {
+              finalContentType = COLLECTION_WIDE_OVERRIDES[collection];
+            }
+
+            // Item content_type override
+            if (ITEM_WIDE_OVERRIDES[inscriptions[i].id]) {
+              finalContentType = ITEM_WIDE_OVERRIDES[inscriptions[i].id];
+            }
+
             inscriptions[i] = {
               ...inscriptions[i],
-              content_type: contentType,
+              content_type: finalContentType,
             };
           }
         }
