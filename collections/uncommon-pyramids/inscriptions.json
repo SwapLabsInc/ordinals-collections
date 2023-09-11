@@ -1,14 +1,1 @@
-[
-  {
-    "id": "4ec964326b7b4f999889f46e30a6861886893459569c2b66f1137da91806b42di0",
-    "meta": {
-      "name": "Uncommon Pyramid#1"
-    }
-  },
-  {
-    "id": "a672e59102020d8302963b6ce8c4ee329e697d70537f48272bdab7bfe84dd844i0",
-    "meta": {
-      "name": "Uncommon Pyramid#2"
-    }
-  }
-]
+[{"id":"4ec964326b7b4f999889f46e30a6861886893459569c2b66f1137da91806b42di0","meta":{"name":"Uncommon Pyramid#1"},"number":16460304,"content_type":"image/webp"},{"id":"a672e59102020d8302963b6ce8c4ee329e697d70537f48272bdab7bfe84dd844i0","meta":{"name":"Uncommon Pyramid#2"},"number":16733297,"content_type":"image/webp"}]
