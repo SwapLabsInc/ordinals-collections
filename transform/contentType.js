@@ -23,6 +23,7 @@ const ITEM_WIDE_OVERRIDES = {
 // to set content_type for the collection inscriptions
 const MULTI_TYPE_COLLECTIONS = [
   'sub10k',
+  'tokemoji',
 ];
 
 let currentBatchCount = 0;
