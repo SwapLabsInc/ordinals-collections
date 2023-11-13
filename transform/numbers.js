@@ -42,10 +42,13 @@ export const addInscriptionNumbers = async () => {
   for(let collection of getDirectories(path.resolve(__dirname, '../collections/'))) {
     console.log(collection);
     let filePath = `../collections/${collection}/inscriptions.json`;
+    let filePathMeta = `../collections/${collection}/meta.json`;
+    let meta;
+    let inscriptions;
 
-    let inscriptions = [];
     try {
       inscriptions = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)));
+      meta = JSON.parse(fs.readFileSync(path.resolve(__dirname, filePathMeta)));
     } catch (e) {
       console.error(e);
     }
@@ -53,7 +56,6 @@ export const addInscriptionNumbers = async () => {
     let task = async (inscriptions) => {
       // Skip inscriptions that already contain a number
       const inscriptionsToProcess = inscriptions.filter((i) => !i.number || i.number?.length === 0);
-
       const inscriptionIds = inscriptionsToProcess.map((i) => i.id?.toLowerCase());
 
       if (inscriptionIds.length > 0) {
@@ -102,7 +104,23 @@ export const addInscriptionNumbers = async () => {
       return inscriptions;
     };
 
-    let transformedInscriptions = await promiseAllInBatches(task, inscriptions, BATCH_SIZE);
-    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(transformedInscriptions, null, null));
+    if (inscriptions) {
+      let transformedInscriptions = await promiseAllInBatches(task, inscriptions, BATCH_SIZE);
+      fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(transformedInscriptions, null, null));
+
+      let min, max;
+
+      for (let inscription of transformedInscriptions) {
+        if (!inscription.number) continue;
+        if (min == undefined || inscription.number < min) min = inscription.number;
+        if (max == undefined || inscription.number > max) max = inscription.number;
+      }
+
+      if (meta && min && max) {
+        meta.inscription_min = min;
+        meta.inscription_max = max;
+        fs.writeFileSync(path.resolve(__dirname, filePathMeta), JSON.stringify(meta, null, null));
+      }
+    }
   }
 };
