@@ -24,6 +24,7 @@ const ITEM_WIDE_OVERRIDES = {
 const MULTI_TYPE_COLLECTIONS = [
   'sub10k',
   'tokemoji',
+  'perpetualsvol1'
 ];
 
 let currentBatchCount = 0;
