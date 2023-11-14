@@ -1,12 +1,14 @@
 # Good linter: http://www.yamllint.com/
 name: CICD_PROD
 on:
-  push:
-    branches:
-    - main
+  workflow_run:
+    workflows: [ "Rust" ]
+    types: [ completed ]
+    branches: [ main ]
 jobs:
   ci:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Checkout codebase
       uses: actions/checkout@v2

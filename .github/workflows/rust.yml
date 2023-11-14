@@ -10,7 +10,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build: 
+  test:
+    name: Check Validity
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
