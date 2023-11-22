@@ -1,12 +1,15 @@
 #!/bin/sh
 echo
-if [ -e .commit ]
-    then
+if [ -e .commit ]; then
     rm .commit
-    node transform
-    git add collections/
-    git add collections.json
-    git add lookup/
-    git commit --amend -C HEAD --no-verify
+    if node transform; then
+        git add collections/
+        git add collections.json
+        git add lookup/
+        git commit --amend -C HEAD --no-verify && echo "----\n\n---- Collection transform success!\n\n----"
+    else
+        echo "----\n\n---- Collection transform failed. Soft resetting last commit...\n\n----"
+        git reset HEAD^ --soft
+    fi
 fi
 exit

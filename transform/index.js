@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 import { addInscriptionNumbers } from './numbers.js';
 import { addContentType } from './contentType.js';
+import { parseAttributes } from './parseAttributes.js';
 import { cleanupInscriptionFiles } from './cleanup.js';
 import { flattenMetadataFiles } from './flattenMetadata.js';
 import { processBrc721 } from './brc721.js';
@@ -316,6 +317,7 @@ let enabled = [];
 
   await addInscriptionNumbers();
   await addContentType();
+  await parseAttributes();
   await processBrc721();
   await cleanupInscriptionFiles();
   await flattenMetadataFiles();
