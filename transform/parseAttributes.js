@@ -23,7 +23,8 @@ export const parseAttributes = async () => {
       console.error(e);
     }
 
-    let categoryAttrs = [];
+    let eligibleAttrs = [];
+    let ineligibleAttrs = [];
 
     for(let inscription of inscriptions) {
       let attributes = inscription.meta?.attributes;
@@ -36,19 +37,24 @@ export const parseAttributes = async () => {
 
         if(!seen[key]) {
           seen[key] = [];
-          categoryAttrs.push(key);
         }
 
+        if (!eligibleAttrs.includes(key)) {
+          eligibleAttrs.push(key);
+        }
+
+
         if(seen[key].indexOf(attr.value) > -1) {
-          const idx = categoryAttrs.indexOf(key);
-          categoryAttrs.splice(idx, 1);
+          if (!ineligibleAttrs.includes(key)) {
+            ineligibleAttrs.push(key);
+          }
         }
 
         seen[key].push(attr.value);
       }
     }
 
-    meta.category_attributes = categoryAttrs;
+    meta.category_attributes = eligibleAttrs.filter((attr) => !ineligibleAttrs.includes(attr));
 
     if (inscriptions && meta) {
       fs.writeFileSync(path.resolve(__dirname, filePathMeta), JSON.stringify(meta, null, null));
