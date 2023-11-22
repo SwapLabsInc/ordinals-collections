@@ -35,22 +35,15 @@ export const parseAttributes = async () => {
       for (let attr of attributes) {
         const key = attr.trait_type;
 
-        if(!seen[key]) {
-          seen[key] = [];
-        }
-
         if (!eligibleAttrs.includes(key)) {
           eligibleAttrs.push(key);
         }
 
-
-        if(seen[key].indexOf(attr.value) > -1) {
-          if (!ineligibleAttrs.includes(key)) {
-            ineligibleAttrs.push(key);
-          }
+        if(!seen[key]){
+          seen[key] = true;
+        } else if(!ineligibleAttrs.includes(key)) {
+          ineligibleAttrs.push(key);
         }
-
-        seen[key].push(attr.value);
       }
     }
 
